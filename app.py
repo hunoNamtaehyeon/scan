@@ -21,7 +21,7 @@ if uploaded_file is not None:
     stroke_width = 2
     stroke_color = "#00FF00"
     bg_image = Image.open(uploaded_file)
-    
+    print(bg_image.size)
     # 스트림릿 캔버스 생성
     canvas_result = st_canvas(
         fill_color="rgba(255, 165, 0, 0.3)",
