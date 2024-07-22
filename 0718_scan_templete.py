@@ -280,14 +280,15 @@ def convert_pdf_folder_to_images(origin_pdf_dir, pdf_to_divied_jpg_dir, divied_j
                 left_img = img[:, :mid_width]
                 right_img = img[:, mid_width:]
                 
-                # output_path = os.path.join(pdf_to_divied_jpg_dir, f"{base_filename}_origin_{page_num + 1}.jpg")
-                # left_path = os.path.join(pdf_to_divied_jpg_dir, f"{base_filename}_{left_num}.jpg")
-                # right_path = os.path.join(pdf_to_divied_jpg_dir, f"{base_filename}_{right_num}.jpg")
+                output_path = os.path.join(pdf_to_divied_jpg_dir, f"{base_filename}_origin_{page_num + 1}.jpg")
+                left_path = os.path.join(pdf_to_divied_jpg_dir, f"{base_filename}_{left_num}.jpg")
+                right_path = os.path.join(pdf_to_divied_jpg_dir, f"{base_filename}_{right_num}.jpg")
                 
-                # for path, image in zip([output_path, left_path, right_path], [img, left_img, right_img]):
-                #     cv2.imwrite(path, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
-                #     image_pil = Image.open(path)
-                #     image_pil.save(path, dpi=(300, 300))
+                for path, image in zip([output_path, left_path, right_path], [img, left_img, right_img]):
+                    cv2.imwrite(path, cv2.cvtColor(image, cv2.COLOR_RGB2BGR))
+                    image_pil = Image.open(path)
+                    image_pil.save(path, dpi=(300, 300))
+                    
                 min_area=100
                 max_area=1000
                 for img, img_num in zip([left_img, right_img], [left_num, right_num]):
@@ -333,7 +334,7 @@ def convert_pdf_folder_to_images(origin_pdf_dir, pdf_to_divied_jpg_dir, divied_j
                     dst_points = np.float32([[0, 0], [width, 0], [0, height], [width, height]])
                     matrix = cv2.getPerspectiveTransform(original_points, dst_points)
                     transformed_image = cv2.warpPerspective(img, matrix, (width, height))
-                    transformed_image = cv2.filter2D(transformed_image, -1, kernel)
+                    # transformed_image = cv2.filter2D(transformed_image, -1, kernel)
                     
                     for idx in range(2):
                         project_num = filename.split(".")[0]
@@ -343,6 +344,7 @@ def convert_pdf_folder_to_images(origin_pdf_dir, pdf_to_divied_jpg_dir, divied_j
                                                         interpolation=cv2.INTER_LANCZOS4)
                         else: # origin
                             image = transformed_image.copy()
+                            image = cv2.filter2D(image, -1, kernel)
                                 
                         fn = f"{project_num}_{img_num}.jpg"
                         result_image_path = os.path.join(divied_jpg_crop_from_vertex_dir, f"{fn}")
